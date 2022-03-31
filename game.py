@@ -1,6 +1,7 @@
 from die import roll_die
 
-money = 100
+initial_money = 100
+money = initial_money
 pass_line_bet = 10
 
 craps_rolls = [2, 3, 12]
@@ -13,7 +14,7 @@ bet_on_6 = False
 bet_on_8 = False
 total_rolls = 0
 roll = 0
-limit = 10
+limit = 100
 
 def print_game_status():
     print(f'Total rolls: {total_rolls}')
@@ -42,67 +43,85 @@ def seven_out():
     global point_on
     global point
     global money
+    global odds_bet
+    global bet_on_6
+    global bet_on_8
+
+    if bet_on_8 or bet_on_6:
+        bet_on_6 == False
+        bet_on_8 == False
+        money -= 12
+    if odds_bet:
+        odds_bet = False
+        money -= 10
+    money -= pass_line_bet
     point_on = False
     point = 0
-    money -= pass_line_bet
 
 while(total_rolls < limit): 
     # Coming out roll
     shoot_dice()
     if (not point_on and roll == that_number or roll == 11):
-        print('Winner!')
-        print(roll)
+        # print('Winner!')
+        # print(roll)
         money += pass_line_bet
-        print_game_status()
+        # print_game_status()
     elif(not point_on and roll not in craps_rolls):
         point_on = True
         point = roll
-        print('Point is established')
-        print(f'Point is {point}')
-        print_game_status()
+        # print('Point is established')
+        # print(f'Point is {point}')
+        # print_game_status()
     else:
-        print('Loser, sorry')
-        print(roll)
+        # print('Loser, sorry')
+        # print(roll)
         money -= pass_line_bet
-        print_game_status()
+        # print_game_status()
 
     reset_roll()
 
     while(point_on and total_rolls < limit):
-        print(f'Point is {point}')
+        # print(f'Point is {point}')
         if point == 6 and odds_bet == False and bet_on_8 == False:
             odds_bet = True
             money -= 10
             bet_on_8 = True
             money -= 12
-            print('Bets placed on 8 and odds')
+            # print('Bets placed on 8 and odds')
         if point == 8 and odds_bet == False and bet_on_6 == False:
             odds_bet = True
             money -= 10
             bet_on_6 = True
             money -= 12
-            print('Bets placed on 6 and odds')
+            # print('Bets placed on 6 and odds')
 
         shoot_dice()
         if roll == point:
-            print('Winner!')
-            print(f'Roll is {roll}, point is {roll}')
+            # print('Winner!')
+            # print(f'Roll is {roll}, point is {roll}')
             point_on = False
             point = 0
             money += pass_line_bet
-            print_game_status()
+            # print_game_status()
         elif roll == that_number:
-            print('Oh no 7 out')
-            print(f'Roll is {roll}')
+            # print('Oh no 7 out')
+            # print(f'Roll is {roll}')
             seven_out()
-            print_game_status()
+            # print_game_status()
         elif roll == 6 or roll == 8:
-            print('Winner!')
-            print(f'Roll is {roll}')
+            # print('Winner!')
+            # print(f'Roll is {roll}')
             payout_6_or_8()
-            print_game_status()
+            # print_game_status()
         else:
-            print('No result')
-            print(f'Roll is {roll}')
-            print_game_status()
+            continue
+            # print('No result')
+            # print(f'Roll is {roll}')
+            # print_game_status()
 
+print_game_status()
+
+# if money < initial_money:
+#     print('Lost money :(')
+# else:
+#     print('Gained or broke even')
