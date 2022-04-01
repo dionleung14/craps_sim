@@ -3,13 +3,14 @@ import random
 
 initial_money = 100
 money = initial_money
+bets_on_table = 0
 pass_line_bet = 10
 
 craps_rolls = [2, 3, 12]
 that_number = 7
 point_on = False
 point = 0
-pass_line = True
+pass_line = False
 odds_bet = False
 bet_on_6 = False
 bet_on_8 = False
@@ -23,6 +24,12 @@ def print_game_status():
     print(f'Point on: {point_on}')
     # print(f'Bet on pass line: {pass_line}')
     print('\n')
+
+def print_money_status():
+    print(f'Money in hand: {money}')
+    print(f'Bets on table: {bets_on_table}')
+    print(f'Total accounted for: {money + bets_on_table}')
+    # print(f'Net: {money + bets_on_table}')
 
 def reset_roll():
     global roll
@@ -49,7 +56,7 @@ def reset_game():
     global bet_on_8
     point_on = False
     point = 0
-    pass_line = True
+    pass_line = False
     odds_bet = False
     bet_on_6 = False
     bet_on_8 = False
@@ -72,6 +79,7 @@ def rolls_with_point_established():
     global point_on
     global point
     global money
+    global pass_line
     global pass_line_bet
     global bet_on_6
     global bet_on_8
@@ -119,7 +127,12 @@ def rolls_with_point_established():
 
 while(total_rolls < limit): 
     reset_roll() # Simulates stickman giving dice (back) to shooter
-
+    if not pass_line:
+        print(f'Placing pass line bet')
+        money -= pass_line_bet
+        bets_on_table += pass_line_bet
+        pass_line = True
+        print_money_status()
     # Coming out roll
     print('Coming out')
     shoot_dice()
@@ -131,6 +144,7 @@ while(total_rolls < limit):
         print(f'Money before: {money}')
         money += pass_line_bet
         print(f'Money after: {money}')
+        print_money_status()
     
     # Point off, craps roll (2, 3, or 12)
     elif (not point_on and roll in craps_rolls):
@@ -138,6 +152,8 @@ while(total_rolls < limit):
         print(f'Money before: {money}')
         money -= pass_line_bet
         print(f'Money after: {money}')
+        pass_line = False
+        print_money_status()
 
     # Point off, roll establishes point (not a 2, 3, or 12) 
     elif (not point_on and roll not in craps_rolls):
@@ -155,33 +171,43 @@ while(total_rolls < limit):
         bet_on_8 = True
         odds_bet = True
         print(f'Point is 6 ({point}) and bet is on 8. Odds backed')
-        print(f'Money before: {money}')
+        # print(f'Money before: {money}')
         money -= 12
         money -= 10
-        print(f'Money after: {money}')
+        bets_on_table += 12
+        bets_on_table += 10
+        # print(f'Money after: {money}')
+        print_money_status()
     elif (point == 8): # If point is 8, bet on 6, odds behind
         bet_on_6 = True
         odds_bet = True
         print(f'Point is 8 ({point}) and bet is on 6. Odds backed')
-        print(f'Money before: {money}')
+        # print(f'Money before: {money}')
         money -= 12
         money -= 10
-        print(f'Money after: {money}')
+        bets_on_table += 12
+        bets_on_table += 10
+        # print(f'Money after: {money}')
+        print_money_status()
     # If point is not a 6 or 8, place a random bet on 6 or 8, no odds
     else:
         coin_flip = random.randint(1,2)
         if coin_flip % 2 == 0:
             bet_on_8 = True
             print(f'Point established on {point}, betting on 8')
-            print(f'Money before: {money}')
+            # print(f'Money before: {money}')
             money -= 12
-            print(f'Money after: {money}')
+            bets_on_table += 12
+            print_money_status()
+            # print(f'Money after: {money}')
         else:
             bet_on_6 = True
             print(f'Point established on {point}, betting on 6')
-            print(f'Money before: {money}')
+            # print(f'Money before: {money}')
             money -= 12
-            print(f'Money after: {money}')
+            bets_on_table += 12
+            print_money_status()
+            # print(f'Money after: {money}')
 
     reset_roll() # Simulates stickman giving dice back to shooter
 
